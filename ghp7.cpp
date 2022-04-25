@@ -2,7 +2,7 @@
 Program take a string from the user,
     hash it and store the string in a vector
     at the hashed index. Then it will display 
-    the vector and allowe the user to input a string
+    the vector and allow the user to input a string
     to check if the string is in the vector.
 Written by Michael Giardina
 April 29, 2022
@@ -172,7 +172,7 @@ int main(void)
     char input = 'Y';
     string word, target;
 
-    //Query the user for 10 words
+    //Ask the user for 10 words
     cout << "Please enter ten words: " << endl;
     for (i = 0; i < 10 ; i++)
     {
