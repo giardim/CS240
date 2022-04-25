@@ -1,3 +1,14 @@
+/**************************
+Program take a string from the user,
+    hash it and store the string in a vector
+    at the hashed index. Then it will display 
+    the vector and allowe the user to input a string
+    to check if the string is in the vector.
+Written by Michael Giardina
+April 29, 2022
+Language: C++ (g++ target)
+***************************/
+
 #include <iostream>
 #include <vector>
 #include <string>
@@ -8,15 +19,37 @@ using namespace std;
 class Hash
 {
 public:
+    /**************************
+    Construction function for the hash class.
+    Written by Michael Giardina
+    April 29, 2022
+    Language: C++ (g++ target)
+    ***************************/
     Hash()
         : hashVector(15, "?")
         {}
 
     void display()
     {
+    /**************************
+    Method used to display the vector
+    Written by Michael Giardina
+    April 29, 2022
+    Language: C++ (g++ target)
+    ***************************/
         for (place = hashVector.begin(); place != hashVector.end(); place++)
         {
-            cout << *place << " ";
+            //Check the current value of the vector
+            if(*place == "?")
+            {
+                //if the value is '?' write "empty"
+                cout << "EMPTY" << " ";
+            }
+            else
+            {
+                //if the value is not '?' write the value
+                cout << *place << " ";
+            }
         }
         cout << endl;
         return;
@@ -24,21 +57,48 @@ public:
 
     void fill(string word)
     {
+    /**************************
+    Method used to take the word the user
+        input, hash it, and place it in the 
+        vector.
+    Written by Michael Giardina
+    April 29, 2022
+    Language: C++ (g++ target)
+    ***************************/
+        //Hash the word the user inputs
         element = (word[0] + word [1] - word[word.size() - 1]) % 15;
+        
+        //Assign the iterator to the beginning of the vector
+        // plus the hashed value
         place = hashVector.begin() + element; 
+        
+        //Check the current value of the vector
         if (*place == "?")
         {
+            //If the value is '?', assign the word to the vector
+            // at the element index
             hashVector[element] = word;
         }
         else 
         {
+            //check the current value of the vector
             while (*place != "?")
-            {place++;
+            {   
+                //While the value of the vector is not '?'
+                // increment the iterator
+                place++;
+            
+                //Check if the iterator is the end of the vector
                 if(place == hashVector.end())
-                {
+                {   
+                    //If the iterator is past the end of the vector
+                    // Make the iterator equal to the beginning of the vector
                     place = hashVector.begin();
                 }
             }
+
+            //Erase the value at current iterator and replace it with the 
+            // New word
             place = hashVector.erase(place);
             place = hashVector.insert(place, word);
         }
@@ -47,32 +107,58 @@ public:
 
     int search(string target)
     {
+    /**************************
+    Method used to search for the string
+        the user input
+    Written by Michael Giardina
+    April 29, 2022
+    Language: C++ (g++ target)
+    ***************************/
         int outcome = -1;
 
+        //Hash the target word input
         element = (target[0] + target [1] - target[target.size() - 1]) % 15;
+       
+        //Assign the iterator to the beginning of the vector
+        // plus the hashed value
         place = hashVector.begin() + element;
         
         do
-        {
+        {   
+            //Check if the target word is equal to the current 
+            //  value of the vector
             if (target == *place)
             {
+                //If it is, assign 1 to outcome
                 outcome = 1;
             }
             else 
             {
+                //Increment iterator
                 place++;
+
+                //Check if the iterator is the end of the vector
                 if(place == hashVector.end())
                 {
+                    //If the iterator is past the end of the vector
+                    // Make the iterator equal to the beginning of the vector
                     place = hashVector.begin();
                 }
             }
-        }while((*place != "?") && (outcome == -1));
-
+        //Check if the current value at the vector is '?' and 
+        // the value of outcome
+        } while((*place != "?") && (outcome == -1));
 
         return outcome;
     }
 
 private:
+    /**************************
+    Values to be used inside the class.
+    Written by Michael Giardina
+    April 29, 2022
+    Language: C++ (g++ target)
+    ***************************/
     vector<string> hashVector;
     vector<string>::iterator place;
     int element = 0; 
@@ -86,6 +172,7 @@ int main(void)
     char input = 'Y';
     string word, target;
 
+    //Query the user for 10 words
     cout << "Please enter ten words: " << endl;
     for (i = 0; i < 10 ; i++)
     {
@@ -93,18 +180,22 @@ int main(void)
         hash.fill(word);
     }
 
+    //Display the vector
     hash.display();
 
     do
     {
+        //Ask what word the user wants to find in the list
         cout << "What word would you like to find in the list?: ";
         cin >> target;
         outcome = hash.search(target);
         
+        //If the word was found, tell the user
         if (outcome == 1)
         {
             cout << "The word was found in the list" << endl;
         } 
+        //If the word was not found, tell the user
         else
         {
             cout << "The word was not found in the list" << endl;
@@ -117,18 +208,3 @@ int main(void)
     }while(input == 'Y');
     return 0;
 }
-
-/*(1) defines and implements a hash class that constructs a 15 element array (may be implemented using a vector, a deque, or a list, if you prefer, (using the STL implementations, not Nyhoff's), storing strings, using the following hash function:
-((first_letter) + (second_letter) - (last_letter))% 15
-
-
-So, for example, the word "rocky" would be
-('r') = 114 + ('o') = 111 - ('y') = 121 = 104%15 = 14
-
-
-In this example, an attempt would be made to store "rocky" in position 14. In the event of a collision, the word would be stored in the first available location, so if there is a collision in location 14, an attempt would be made to store the word in location 15, but the next location after location 14 is to circle back to location 0 because there is no location 15.  If there is a collision in location 0, try location 1, and so on.
-I will not try your program with words that are shorter than three letters, so you do not need to consider shorter words.
-(2) the driver program should:
-a. query the user for ten words and store them using the hash technique described above.
-b. print out the contents of each position of the array (or vector, deque, or whatever you used), showing vacant as well as filled positions. Remember, only 10 of the 15 positions will be filled.
-c. repeatedly query the user for a target word, hash the word, check for its inclusion in the list of stored words, and report the result. Continue doing this task until the user signals to stop (establish a sentinel condition).*/
